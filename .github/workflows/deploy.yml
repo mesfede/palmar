@@ -22,6 +22,25 @@ jobs:
       - name: 📦 Instalar dependencias
         run: npm install --no-audit --no-fund --prefer-offline
 
+      - name: 🔍 Diagnóstico de credenciales (Seguro)
+        run: |
+          echo "=== Diagnóstico de Variables en GitHub ==="
+          if [ -z "${{ secrets.FTP_HOST || vars.FTP_HOST }}" ]; then
+            echo "❌ ERROR: FTP_HOST no se detecta. Verifica que esté creado exactamente con ese nombre (en mayúsculas) en Repository Secrets."
+          else
+            echo "✅ FTP_HOST detectado correctamente."
+          fi
+          if [ -z "${{ secrets.FTP_USER || vars.FTP_USER }}" ]; then
+            echo "❌ ERROR: FTP_USER no se detecta."
+          else
+            echo "✅ FTP_USER detectado correctamente."
+          fi
+          if [ -z "${{ secrets.FTP_PASSWORD || vars.FTP_PASSWORD }}" ]; then
+            echo "❌ ERROR: FTP_PASSWORD no se detecta."
+          else
+            echo "✅ FTP_PASSWORD detectado correctamente."
+          fi
+
       - name: 🏗️ Compilar el proyecto para producción
         run: npm run build
 
