@@ -1,0 +1,36 @@
+name: Despliegue a Hostinger FTP
+
+on:
+  push:
+    branches:
+      - main
+      - master # Soporta tanto 'main' como 'master' según cuál sea tu rama principal
+
+jobs:
+  web-deploy:
+    name: Compilar y Desplegar
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🚚 Obtener código del repositorio
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Configurar entorno de Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: 📦 Instalar dependencias
+        run: npm ci || npm install
+
+      - name: 🏗️ Compilar el proyecto para producción
+        run: npm run build
+
+      - name: 📤 Subir archivos compilados vía FTP a Hostinger
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist/
+          server-dir: /domains/unke.com.ar/public_html/palmar/
