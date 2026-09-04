@@ -20,7 +20,7 @@ jobs:
           node-version: 22 # Actualizado a Node 22 para evitar avisos de depreciación
 
       - name: 📦 Instalar dependencias
-        run: npm install
+        run: npm ci --prefer-offline --no-audit --no-fund
 
       - name: 🏗️ Compilar el proyecto para producción
         run: npm run build
