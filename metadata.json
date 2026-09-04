@@ -1,0 +1,6 @@
+{
+  "name": "El Palmar Multiespacio",
+  "description": "Alquiler de salón para cumpleaños infantiles, bautismos, comuniones y más eventos en Villa Elisa, La Plata.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
