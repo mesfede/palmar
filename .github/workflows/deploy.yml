@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - master # Soporta tanto 'main' como 'master' según cuál sea tu rama principal
+  workflow_dispatch: # Permite ejecutar el despliegue manualmente desde GitHub Actions con un botón
 
 jobs:
   web-deploy:
@@ -17,7 +18,7 @@ jobs:
       - name: ⚙️ Configurar entorno de Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22 # Actualizado a Node 22 para evitar avisos de depreciación
+          node-version: 22
 
       - name: 📦 Instalar dependencias
         run: npm install --no-audit --no-fund --prefer-offline
@@ -25,20 +26,20 @@ jobs:
       - name: 🔍 Diagnóstico de credenciales (Seguro)
         run: |
           echo "=== Diagnóstico de Variables en GitHub ==="
-          if [ -z "${{ secrets.FTP_HOST || vars.FTP_HOST }}" ]; then
-            echo "❌ ERROR: FTP_HOST no se detecta. Verifica que esté creado exactamente con ese nombre (en mayúsculas) en Repository Secrets."
+          if [ -z "${{ secrets.FTP_HOST || secrets.FTP_SERVER || vars.FTP_HOST || vars.FTP_SERVER }}" ]; then
+            echo "ℹ️ FTP_HOST no se especificó en secrets. Se usará automáticamente 'ftp.unke.com.ar'."
           else
-            echo "✅ FTP_HOST detectado correctamente."
+            echo "✅ Servidor FTP detectado."
           fi
-          if [ -z "${{ secrets.FTP_USER || vars.FTP_USER }}" ]; then
-            echo "❌ ERROR: FTP_USER no se detecta."
+          if [ -z "${{ secrets.FTP_USER || secrets.FTP_USERNAME || vars.FTP_USER || vars.FTP_USERNAME }}" ]; then
+            echo "❌ ATENCIÓN: No se detecta FTP_USER ni FTP_USERNAME en los Repository Secrets de GitHub."
           else
-            echo "✅ FTP_USER detectado correctamente."
+            echo "✅ Usuario FTP detectado."
           fi
-          if [ -z "${{ secrets.FTP_PASSWORD || vars.FTP_PASSWORD }}" ]; then
-            echo "❌ ERROR: FTP_PASSWORD no se detecta."
+          if [ -z "${{ secrets.FTP_PASSWORD || secrets.FTP_PASS || vars.FTP_PASSWORD || vars.FTP_PASS }}" ]; then
+            echo "❌ ATENCIÓN: No se detecta FTP_PASSWORD ni FTP_PASS en los Repository Secrets de GitHub."
           else
-            echo "✅ FTP_PASSWORD detectado correctamente."
+            echo "✅ Contraseña FTP detectada."
           fi
 
       - name: 🏗️ Compilar el proyecto para producción
@@ -47,9 +48,9 @@ jobs:
       - name: 📤 Subir archivos compilados vía FTP a Hostinger
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FTP_HOST || vars.FTP_HOST }}
-          username: ${{ secrets.FTP_USER || vars.FTP_USER }}
-          password: ${{ secrets.FTP_PASSWORD || vars.FTP_PASSWORD }}
+          server: ${{ secrets.FTP_HOST || secrets.FTP_SERVER || vars.FTP_HOST || vars.FTP_SERVER || 'ftp.unke.com.ar' }}
+          username: ${{ secrets.FTP_USER || secrets.FTP_USERNAME || vars.FTP_USER || vars.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD || secrets.FTP_PASS || vars.FTP_PASSWORD || vars.FTP_PASS }}
           local-dir: ./dist/
           server-dir: /domains/unke.com.ar/public_html/palmar/
           port: 21
