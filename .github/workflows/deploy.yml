@@ -33,3 +33,6 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./dist/
           server-dir: /domains/unke.com.ar/public_html/palmar/
+          port: 21
+          security: loose # Permite la conexión ante certificados auto-firmados o sin dominio coincidente para evitar que se cuelgue la conexión
+
