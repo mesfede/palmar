@@ -28,9 +28,9 @@ jobs:
       - name: 📤 Subir archivos compilados vía FTP a Hostinger
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USER }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          server: ${{ secrets.FTP_HOST || vars.FTP_HOST }}
+          username: ${{ secrets.FTP_USER || vars.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD || vars.FTP_PASSWORD }}
           local-dir: ./dist/
           server-dir: /domains/unke.com.ar/public_html/palmar/
           port: 21
